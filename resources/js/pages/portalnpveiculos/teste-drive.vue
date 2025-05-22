@@ -14,7 +14,7 @@
                     <input
                         v-model="form.modelo"
                         type="text"
-                        placeholder="Modelo ou Placa do veículo"
+                        placeholder="Chassi ou Placa do veículo"
                         required
                     />
                     <textarea
@@ -203,8 +203,8 @@ table {
     background: rgb(255, 255, 255);
 }
 th, td {
+    text-align: center;
     padding: 0.75rem;
-    text-align: left;
     border-bottom: 1px solid gray;
 }
 .status-indicator {

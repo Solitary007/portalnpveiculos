@@ -1,11 +1,13 @@
 <template>
   <div>
+    <h3>teste</h3>
     <button @click="adicionarLinha">Adicionar Linha</button>
     <table>
       <thead>
         <tr>
           <th v-for="col in colunas" :key="col">{{ col }}</th>
           <th>Ações</th>
+          
         </tr>
       </thead>
       <tbody>
