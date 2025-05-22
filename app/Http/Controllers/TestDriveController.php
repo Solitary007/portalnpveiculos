@@ -12,29 +12,29 @@ use Inertia\Response;
 
 class TestDriveController extends Controller
 {
-    public function create() : Response
+    public function store(Request $request)
     {
-        return Inertia::render('portalnpveiculos/exemplo/ExemploForm');
-    }
-
-    public function store(Request $request) : RedirectResponse
-    {
-
-
-        /*$request->validate([
-           'placa' => 'required|string|max:255',
-           'responsavel' => 'required|string|max:255',
-        ]);*/
-
-        $testDrive = TestDrive::create([
-            'placa' => $request->placa,
-            'responsavel' => $request->responsavel,
+        $registro = TestDrive::create([
+            'nome' => $request->nome,
+            'veiculo' => $request->modelo,
+            'obs' => $request->observacoes,
+            'saida' => now(),
+            'status' => 'red',
         ]);
-        event(new Registered($testDrive));
-
-        return to_route('dashboard');
-
+        return response()->json($registro, 201);
     }
 
+    public function index()
+    {
+        return TestDrive::orderBy('id', 'desc')->get();
+    }
 
+    public function entrada($id)
+    {
+        $registro = TestDrive::findOrFail($id);
+        $registro->entrada = now();
+        $registro->status = 'green';
+        $registro->save();
+        return response()->json($registro);
+    }
 }

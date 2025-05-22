@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\EstoqueController;
+use App\Http\Controllers\TestDriveController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -18,6 +20,14 @@ Route::get('/hello-world', function () {
 Route::get('/teste-drive', function () {
     return Inertia::render('portalnpveiculos/teste-drive');
 })->name('hello.world');
+
+Route::get('/estoque', [EstoqueController::class, 'index']);
+Route::post('/estoque', [EstoqueController::class, 'store']);
+Route::put('/estoque/{id}', [EstoqueController::class, 'update']);
+
+Route::get('/test-drives', [TestDriveController::class, 'index']);
+Route::post('/test-drives', [TestDriveController::class, 'store']);
+Route::post('/test-drives/{id}/entrada', [TestDriveController::class, 'entrada']);
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
