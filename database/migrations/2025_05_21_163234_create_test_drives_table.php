@@ -9,16 +9,19 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('test_drives', function (Blueprint $table) {
             $table->id();
-            $table->string('placa');
-            $table->string('responsavel');
+            $table->string('nome');
+            $table->string('veiculo');
+            $table->text('obs')->nullable();
+            $table->timestamp('saida');
+            $table->timestamp('entrada')->nullable();
+            $table->string('status')->default('red');
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */

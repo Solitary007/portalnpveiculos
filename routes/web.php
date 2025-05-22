@@ -3,8 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-
-
 Route::get('/', function () {
     return Inertia::render('Welcome');
 })->name('home');
@@ -15,6 +13,10 @@ Route::get('dashboard', function () {
 
 Route::get('/hello-world', function () {
     return Inertia::render('portalnpveiculos/HelloWorld');
+})->name('hello.world');
+
+Route::get('/teste-drive', function () {
+    return Inertia::render('portalnpveiculos/teste-drive');
 })->name('hello.world');
 
 require __DIR__.'/settings.php';
