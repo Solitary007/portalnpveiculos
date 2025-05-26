@@ -1,22 +1,34 @@
 <template>
-  <div>
-    <h3>teste</h3>
-    <button @click="adicionarLinha">Adicionar Linha</button>
-    <table>
+  <div class="p-4">
+    <h2 class="text-xl font-bold mb-4">Cadastro de Veículos</h2>
+
+    <form @submit.prevent="salvarVeiculo" class="grid grid-cols-3 gap-2 mb-4">
+      <div v-for="campo in campos" :key="campo">
+        <label class="block text-sm font-medium">{{ formatarCampo(campo) }}</label>
+        <input
+          v-model="form[campo]"
+          type="text"
+          class="w-full border p-1 rounded text-sm"
+        />
+      </div>
+      <button type="submit" class="col-span-3 bg-blue-600 text-white py-2 rounded mt-2">
+        {{ editandoId ? 'Atualizar' : 'Cadastrar' }} Veículo
+      </button>
+    </form>
+
+    <table class="table-auto w-full border-collapse border border-gray-300">
       <thead>
-        <tr>
-          <th v-for="col in colunas" :key="col">{{ col }}</th>
-          <th>Ações</th>
-          
+        <tr class="bg-gray-100 text-xs">
+          <th v-for="campo in campos" :key="campo" class="border p-2">{{ formatarCampo(campo) }}</th>
+          <th class="border p-2">Ações</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(linha, i) in linhas" :key="linha.id || i">
-          <td v-for="col in colunas" :key="col">
-            <input v-model="linha[col]" @blur="salvarLinha(linha)" />
-          </td>
-          <td>
-            <button @click="salvarLinha(linha)">Salvar</button>
+        <tr v-for="veiculo in veiculos" :key="veiculo.id" class="text-xs">
+          <td v-for="campo in campos" :key="campo" class="border p-1">{{ veiculo[campo] }}</td>
+          <td class="border p-1 flex gap-2">
+            <button @click="editarVeiculo(veiculo)" class="text-blue-600 text-xs">Editar</button>
+            <button @click="deletarVeiculo(veiculo.id)" class="text-red-600 text-xs">Excluir</button>
           </td>
         </tr>
       </tbody>
@@ -25,43 +37,60 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
-      colunas: [
-        'observacao', 'ipva', 'lic', 'chave', 'loja', 'tipo_estoque', 'situacao', 'vistoria_cautelar',
-        'modelo', 'marca', 'cor', 'cbl', 'fab_ano', 'placa', 'fipe', 'custo', 'ga', 'venda',
-        'preco_oferta', 'km', 'origem', 'est_venda', 'data_entrada', 'nota_fiscal'
+      campos: [
+        'observacao', 'ipva', 'lic', 'chave', 'loja', 'tipo_estoque', 'situacao',
+        'vistoria_cautelar', 'modelo', 'marca', 'cor', 'cbl', 'fab', 'ano', 'placa',
+        'fipe', 'custo_ga', 'venda', 'preco_oferta', 'km', 'origem', 'est',
+        'data_entrada', 'nota_fiscal'
       ],
-      linhas: []
+      veiculos: [],
+      form: {},
+      editandoId: null
     };
   },
   created() {
-    this.carregarLinhas();
+    this.resetForm();
+    this.carregarVeiculos();
   },
   methods: {
-    async carregarLinhas() {
-      const resp = await fetch('/api/estoques');
-      this.linhas = await resp.json();
+    formatarCampo(campo) {
+      return campo.replace(/_/g, ' ').toUpperCase();
     },
-    adicionarLinha() {
-      this.linhas.push({});
+    resetForm() {
+      this.form = {};
+      this.campos.forEach(c => this.form[c] = '');
+      this.editandoId = null;
     },
-    async salvarLinha(linha) {
-      if (linha.id) {
-        await fetch(`/api/estoques/${linha.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(linha)
-        });
-      } else {
-        const resp = await fetch('/api/estoques', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(linha)
-        });
-        const novo = await resp.json();
-        Object.assign(linha, novo);
+    async carregarVeiculos() {
+      const response = await axios.get('/api/veiculos');
+      this.veiculos = response.data;
+    },
+    async salvarVeiculo() {
+      try {
+        if (this.editandoId) {
+          await axios.put(`/api/veiculos/${this.editandoId}`, this.form);
+        } else {
+          await axios.post('/api/veiculos', this.form);
+        }
+        this.resetForm();
+        this.carregarVeiculos();
+      } catch (error) {
+        alert('Erro ao salvar: ' + error.message);
+      }
+    },
+    editarVeiculo(veiculo) {
+      this.form = { ...veiculo };
+      this.editandoId = veiculo.id;
+    },
+    async deletarVeiculo(id) {
+      if (confirm('Tem certeza que deseja excluir?')) {
+        await axios.delete(`/api/veiculos/${id}`);
+        this.carregarVeiculos();
       }
     }
   }
@@ -69,86 +98,7 @@ export default {
 </script>
 
 <style scoped>
-body, html, #app {
-  background: #fff !important;
-  font-family: 'Segoe UI', sans-serif;
-  margin: 0;
-  padding: 0;
-}
-
-div {
-  padding: 2rem 0;
-  min-height: 100vh;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-button {
-  background-color: #e53935;
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
-  padding: 0.6rem 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-  margin-bottom: 1.5rem;
-  transition: background 0.2s;
-}
-button:hover {
-  background-color: #b71c1c;
-}
-
 table {
-  width: 95vw;
-  max-width: 1200px;
-  border-collapse: collapse;
-  background: #fafafa;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  border-radius: 1rem;
-  overflow: hidden;
-}
-
-th, td {
-  padding: 0.6rem 0.4rem;
-  border-bottom: 1px solid #ddd;
-  text-align: left;
-  font-size: 0.98rem;
-}
-
-th {
-  background: #f5f5f5;
-  font-weight: bold;
-  color: #222;
-}
-
-tr:last-child td {
-  border-bottom: none;
-}
-
-input {
-  width: 100%;
-  padding: 0.4rem 0.3rem;
-  border: 1px solid #ccc;
-  border-radius: 0.3rem;
-  font-size: 0.97rem;
-  background: #fff;
-  box-sizing: border-box;
-}
-
-input:focus {
-  outline: 2px solid #e53935;
-  border-color: #e53935;
-  background: #fff9f9;
-}
-
-@media (max-width: 900px) {
-  table, th, td {
-    font-size: 0.85rem;
-  }
-  table {
-    width: 99vw;
-  }
+  font-size: 12px;
 }
 </style>

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('test_drives', function (Blueprint $table) {
-            $table->id();
+            $table->uuid();
             $table->string('nome');
             $table->string('veiculo');
             $table->text('obs')->nullable();
