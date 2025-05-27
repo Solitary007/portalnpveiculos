@@ -9,5 +9,6 @@ class Veiculo extends Model
 {
     use HasFactory;
 
+    //Nome da tabela
     protected $table = 'veiculos';
 }
