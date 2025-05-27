@@ -21,9 +21,9 @@ Route::get('/teste-drive', function () {
     return Inertia::render('portalnpveiculos/teste-drive');
 })->name('hello.world');
 
-Route::get('/estoque', [EstoqueController::class, 'index']);
-Route::post('/estoque', [EstoqueController::class, 'store']);
-Route::put('/estoque/{id}', [EstoqueController::class, 'update']);
+Route::get('/estoque', function () {
+    return Inertia::render('portalnpveiculos/estoque');
+})->name('estoque');
 
 Route::get('/test-drives', [TestDriveController::class, 'index']);
 Route::post('/test-drives', [TestDriveController::class, 'store']);
