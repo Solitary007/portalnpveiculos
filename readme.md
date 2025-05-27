@@ -13,6 +13,7 @@ PORTALNPVEICULOS
 │    └── index.php --- Arquivo inicial da aplicacao (fotos, fonts, css, js)
 ├── bootstrap --- Arquivos de inicializacao do framework
 ├── config --- Arquivos de configuracao do Framework
+│     └── database --- configuracao padrao para banco de dados, caso nao seja criado o parametro no arquivo .env
 ├── vendor --- Armazenamento de tudo que for gerado pelo Composer
 ├── routes --- Arquivos de rota que sera indicada pela / apos inserir o link de requisicao, fazendo o retorno das Views
 │     └── web.php --- Rotas da aplicacao
@@ -34,9 +35,13 @@ PORTALNPVEICULOS
 ![Arquitetura usada para contrucao do site](image.png)
 
 
-Comandos para iniciar o Projeto
+=== Comandos ===
 
+Start
 composer run dev
+
+Listar as rotas
+php artisan 
 
 
 

@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\EstoqueController;
+use App\Http\Controllers\VeiculoController;
 use App\Http\Controllers\TestDriveController;
 
 Route::get('/', function () {
@@ -21,9 +21,7 @@ Route::get('/teste-drive', function () {
     return Inertia::render('portalnpveiculos/teste-drive');
 })->name('hello.world');
 
-Route::get('/estoque', function () {
-    return Inertia::render('portalnpveiculos/estoque');
-})->name('estoque');
+Route::get('/estoque', [VeiculoController::class, 'index'])->name('estoque.index');
 
 Route::get('/test-drives', [TestDriveController::class, 'index']);
 Route::post('/test-drives', [TestDriveController::class, 'store']);
